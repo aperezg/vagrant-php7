@@ -1,0 +1,30 @@
+---
+- name: add MariaDB apt key
+  apt_key: 'url=http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0xcbcb082a1bb943db'
+
+- name: add MariaDB apt repository
+  apt_repository: repo='deb http://tedeco.fi.upm.es/mirror/mariadb/repo/10.1/ubuntu trusty main'
+
+- name: install mariadb
+  apt: name={{ item }} state=latest update_cache=yes
+  with_items:
+    - mariadb-server
+    - mariadb-client
+
+- name: remove all anonymous user accounts
+  mysql_user: name='' host={{ item }} state=absent
+  with_items:
+    - localhost
+    - 127.0.0.1
+    - ::1
+
+- name: set root password
+  mysql_user: name=root host={{ item }} password=12345678  priv=*.*:ALL,GRANT state=present
+  with_items:    
+    - 127.0.0.1
+    - ::1
+    - localhost
+    - %
+
+- name: add my.cnf
+  template: src=templates/my.cnf dest=/etc/mysql/.my.cnf

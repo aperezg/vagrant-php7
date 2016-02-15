@@ -1,0 +1,15 @@
+---
+- name: install nginx
+  apt: name=nginx state=latest force=yes
+
+- name: create vhost
+  template: src=templates/nginx.conf dest=/etc/nginx/sites-available/wishlist.conf
+
+- name: available vhost
+  file: src=/etc/nginx/sites-available/wishlist.conf dest=/etc/nginx/sites-enabled/wishlist.conf state=link
+
+- name: nginx must start after boot
+  service: name=nginx enabled=yes
+
+- name: nginx up
+  service: name=nginx state=restarted

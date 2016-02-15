@@ -1,0 +1,53 @@
+---
+- name: PHP 7 | Add php7 repository
+  apt_repository: repo='ppa:ondrej/php'
+
+- name: PHP7 | Install
+  apt: name={{ item }} state=latest force=yes update_cache=yes
+  with_items:
+   - php7.0
+   - php7.0-mysql
+   - php7.0-fpm
+   - php7.0-common
+   - php7.0-cli
+   - php7.0-cgi
+   - php7.0-dev
+   - php7.0-dbg
+   - php7.0-curl
+   - php7.0-gd
+   - php7.0-imap
+   - php7.0-intl
+   - php7.0-json
+   - php-all-dev
+   - php7.0-opcache
+
+- name: declare php_extension_dir
+  shell: "php -i | grep -i '^extension_dir' | awk '{print $3}'"
+  register: php_extension_dir
+
+- name: configure PHP
+  ini_file: dest=/etc/php/7.0/{{ item[0] }}/php.ini section={{ item[1].section }} value={{ item[1].value }} option={{ item[1].option }}
+  with_nested:
+   - [ "fpm", "cli" ]
+   - [
+       { option: "date.timezone", value: "Europe/Madrid", section: "PHP" }
+   	 ]
+
+- name: install xdebug
+  shell: pecl install -f xdebug
+  ignore_errors: yes
+
+- name: configure xdebug
+  template: src=templates/xdebug.ini.j2 dest=/etc/php/mods-available/xdebug.ini
+
+- name: enable xdebug
+  shell: phpenmod xdebug
+
+- name: configure PHP-FPM
+  template: src=templates/fpm.conf dest=/etc/php/7.0/fpm/pool.d/www.conf
+
+- name: phpfpm must start after boot
+  service: name=php7.0-fpm enabled=yes
+
+- name: phpfpm up
+  service: name=php7.0-fpm state=restarted

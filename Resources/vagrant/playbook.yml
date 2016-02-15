@@ -1,0 +1,22 @@
+---
+- hosts: all
+  sudo: true
+  tasks:
+   - name: update apt cache
+     apt: update_cache=yes  	
+
+   - name: ensure base packages are installed
+     apt: name={{ item }} state=latest force=yes
+     with_items:
+      - vim
+      - build-essential
+      - python-mysqldb
+
+   - name: include nginx
+     include: tasks/nginx.yml
+
+   - name: include php 7
+     include: tasks/php7.yml
+
+   - name: include mysql
+     include: tasks/mysql.yml
