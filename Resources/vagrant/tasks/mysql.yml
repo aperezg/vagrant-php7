@@ -24,7 +24,6 @@
     - 127.0.0.1
     - ::1
     - localhost
-    - %
 
 - name: add my.cnf
   template: src=templates/my.cnf dest=/etc/mysql/.my.cnf

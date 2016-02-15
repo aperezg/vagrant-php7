@@ -7,14 +7,14 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
     config.vm.hostname = "devel"
     config.vm.box_check_update = true
 
-    config.vm.synced_folder '.', '/var/www/current/web', 
+    config.vm.synced_folder '.', '/var/www/current', 
       type: "rsync",
       owner: "www-data",
       group: "www-data",
       rsync__exclude: [".git/", "devel/", "Vagrantfile", ".idea/"],
       rsync__args: %w(-azv --delete)
 
-    config.vm.network "private_network", ip: "166.99.99.3"
+    config.vm.network "private_network", ip: "166.66.66.2"
 
     config.vm.provider 'virtualbox' do |vb|
       vb.name = "Generic KIT PHP7 DEV"

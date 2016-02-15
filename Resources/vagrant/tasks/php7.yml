@@ -20,6 +20,7 @@
    - php7.0-json
    - php-all-dev
    - php7.0-opcache
+   - php-xdebug
 
 - name: declare php_extension_dir
   shell: "php -i | grep -i '^extension_dir' | awk '{print $3}'"
@@ -32,10 +33,6 @@
    - [
        { option: "date.timezone", value: "Europe/Madrid", section: "PHP" }
    	 ]
-
-- name: install xdebug
-  shell: pecl install -f xdebug
-  ignore_errors: yes
 
 - name: configure xdebug
   template: src=templates/xdebug.ini.j2 dest=/etc/php/mods-available/xdebug.ini
